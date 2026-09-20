@@ -2,1891 +2,1963 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Abhedya - AI Indian Sign Language Interpreter for technical education">
-<title>Abhedya | ISL Lecture Interpreter</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Abhedya — AI Sign Language Interpreter</title>
 
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
 :root{
- --bg:#07111f;
- --panel:#0d1b2e;
- --panel2:#11243a;
- --border:#203750;
- --text:#f1f7ff;
- --muted:#91a7bd;
- --primary:#26d0f0;
- --secondary:#8b5cf6;
- --success:#29d391;
- --danger:#ff6678;
- --shadow:0 15px 45px rgba(0,0,0,.25);
+  --bg:#071126;
+  --panel:#0d1a31;
+  --panel2:#11223d;
+  --border:#243b60;
+  --text:#f4f7ff;
+  --muted:#9caeca;
+  --cyan:#21d4fd;
+  --blue:#3478ff;
+  --purple:#8b5cf6;
+  --green:#25d69a;
+  --danger:#ff5c8a;
 }
-
 [data-theme="light"]{
- --bg:#f3f7fb;
- --panel:#ffffff;
- --panel2:#eef4fa;
- --border:#d6e1eb;
- --text:#132033;
- --muted:#5e7084;
- --primary:#079bc0;
- --secondary:#7652d8;
- --success:#129b67;
- --danger:#dc4257;
- --shadow:0 12px 30px rgba(20,40,60,.12);
+  --bg:#eef4fb;
+  --panel:#ffffff;
+  --panel2:#f3f7fc;
+  --border:#ccd8e8;
+  --text:#17243a;
+  --muted:#607089;
 }
-
-*{box-sizing:border-box}
-
-html,body{
- margin:0;
- min-height:100%;
- font-family:Inter,Arial,sans-serif;
- background:var(--bg);
- color:var(--text);
+body{
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
 }
-
-button,input,textarea,select{font:inherit}
-
+button,input,select{font:inherit}
 button{cursor:pointer}
 
-.app{
- display:flex;
- min-height:100vh;
+/* LOGIN */
+#loginPage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:25px;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 75% 35%,rgba(48,100,255,.35),transparent 30%),
+    radial-gradient(circle at 20% 80%,rgba(0,220,255,.15),transparent 30%),
+    #050d22;
+}
+.loginImage{
+  position:absolute;
+  inset:0;
+  background-image:url("login-image.png");
+  background-size:cover;
+  background-position:center;
+  opacity:.32;
+}
+.loginOverlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,#06102b 10%,rgba(6,16,43,.82),rgba(6,16,43,.35));
+}
+.loginContent{
+  position:relative;
+  z-index:2;
+  width:min(1150px,100%);
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:45px;
+  align-items:center;
+}
+.loginHero h1{
+  font-size:clamp(42px,6vw,76px);
+  line-height:1.05;
+  margin-bottom:20px;
+}
+.gradient{
+  background:linear-gradient(90deg,#fff,#21d4fd,#7c5cff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.loginHero p{
+  color:#b9c9e6;
+  font-size:20px;
+  max-width:620px;
+  line-height:1.6;
+}
+.brand{
+  font-size:25px;
+  margin-bottom:30px;
+  color:#fff;
+}
+.brand span{color:var(--cyan)}
+.loginCard{
+  background:rgba(10,23,48,.9);
+  border:1px solid rgba(80,140,255,.35);
+  border-radius:25px;
+  padding:30px;
+  box-shadow:0 25px 80px rgba(0,0,0,.4);
+}
+.loginCard h2{font-size:28px;margin-bottom:8px}
+.loginCard p{color:#9caeca;margin-bottom:25px}
+.roleGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.roleBtn{
+  min-height:120px;
+  border:1px solid #29466e;
+  background:#0d1c36;
+  color:white;
+  border-radius:18px;
+  padding:20px;
+  transition:.2s;
+}
+.roleBtn:hover{
+  transform:translateY(-3px);
+  border-color:var(--cyan);
+  box-shadow:0 10px 30px rgba(33,212,253,.15);
+}
+.roleIcon{font-size:35px;display:block;margin-bottom:10px}
+.roleBtn strong{display:block;font-size:18px}
+.roleBtn small{color:#94a9c9}
+.loginEnter{
+  width:100%;
+  margin-top:18px;
+  padding:15px;
+  border:0;
+  border-radius:14px;
+  color:white;
+  background:linear-gradient(90deg,#8b4dff,#20d6f5);
+  font-weight:700;
+}
+.selected{
+  border-color:#21d4fd!important;
+  box-shadow:0 0 0 2px rgba(33,212,253,.2);
 }
 
+/* APP */
+#app{display:none;min-height:100vh}
+.layout{
+  display:grid;
+  grid-template-columns:250px 1fr;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
 .sidebar{
- width:245px;
- background:var(--panel);
- border-right:1px solid var(--border);
- padding:18px 12px;
- position:fixed;
- top:0;
- bottom:0;
- left:0;
- overflow:auto;
- z-index:20;
+  position:fixed;
+  width:250px;
+  top:0;
+  bottom:0;
+  left:0;
+  background:#09172c;
+  border-right:1px solid #203654;
+  padding:20px 14px;
+  overflow-y:auto;
+  z-index:50;
 }
-
 .logo{
- padding:10px 12px 20px;
- border-bottom:1px solid var(--border);
- margin-bottom:12px;
+  padding:8px 12px 22px;
+  font-size:21px;
+  font-weight:800;
 }
-
-.logo-title{
- font-size:25px;
- font-weight:900;
- color:var(--primary);
+.logo span{color:var(--cyan)}
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
 }
-
-.logo-sub{
- color:var(--muted);
- font-size:11px;
- margin-top:4px;
+.nav button{
+  width:100%;
+  min-height:44px;
+  text-align:left;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#a9bad4;
+  padding:11px 13px;
 }
-
-.navbtn{
- width:100%;
- border:0;
- background:transparent;
- color:var(--muted);
- padding:12px 10px;
- border-radius:10px;
- text-align:left;
- margin:2px 0;
- transition:.2s;
+.nav button:hover,.nav button.active{
+  color:#fff;
+  background:linear-gradient(90deg,#12335a,#102442);
 }
-
-.navbtn:hover,
-.navbtn.active{
- background:linear-gradient(90deg,rgba(38,208,240,.15),rgba(139,92,246,.12));
- color:var(--text);
+.navIcon{
+  width:27px;
+  display:inline-block;
+  color:var(--cyan);
 }
-
-.navicon{
- display:inline-flex;
- width:32px;
- height:24px;
- border-radius:6px;
- background:var(--panel2);
- align-items:center;
- justify-content:center;
- margin-right:8px;
- font-size:9px;
- font-weight:900;
- color:var(--primary);
- vertical-align:middle;
+.sidebarBottom{
+  margin-top:25px;
+  padding-top:18px;
+  border-top:1px solid #203654;
 }
-
-.sidebar-bottom{
- position:absolute;
- bottom:15px;
- left:12px;
- right:12px;
-}
-
 .account{
- padding:12px;
- border:1px solid var(--border);
- border-radius:12px;
- margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:1px solid #294362;
+  border-radius:13px;
 }
-
-.account strong{display:block}
-.account small{color:var(--muted)}
-
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#8b5cf6,#21d4fd);
+  color:#fff;
+  font-weight:800;
+}
+.accountText{min-width:0}
+.accountText strong{display:block}
+.accountText small{color:#91a5c4}
 .logout{
- width:100%;
- padding:10px;
- border:1px solid var(--danger);
- background:transparent;
- color:var(--danger);
- border-radius:8px;
+  width:100%;
+  margin-top:10px;
+  padding:11px;
+  border-radius:10px;
+  border:1px solid #e15a88;
+  background:transparent;
+  color:#ff76a1;
 }
 
+/* MAIN */
 .main{
- margin-left:245px;
- width:calc(100% - 245px);
+  grid-column:2;
+  min-width:0;
 }
-
 .topbar{
- height:64px;
- border-bottom:1px solid var(--border);
- background:var(--panel);
- display:flex;
- align-items:center;
- gap:12px;
- padding:10px 20px;
- position:sticky;
- top:0;
- z-index:10;
+  height:70px;
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:rgba(7,17,38,.94);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:0 25px;
 }
-
 .search{
- flex:1;
- max-width:550px;
- background:var(--panel2);
- border:1px solid var(--border);
- border-radius:10px;
- padding:11px 14px;
- color:var(--text);
- outline:none;
+  flex:1;
+  max-width:500px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:12px;
+  padding:12px 15px;
+  outline:none;
 }
-
-.top-spacer{flex:1}
-
-.theme{
- border:1px solid var(--border);
- background:var(--panel2);
- color:var(--text);
- padding:9px 13px;
- border-radius:9px;
+.topActions{margin-left:auto;display:flex;gap:8px}
+.iconBtn{
+  width:42px;height:42px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--panel);
+  color:var(--text);
 }
-
-.status{
- font-size:11px;
- color:var(--success);
- background:rgba(41,211,145,.1);
- padding:7px 10px;
- border-radius:20px;
-}
-
 .content{
- padding:25px;
- max-width:1400px;
- margin:auto;
+  max-width:1250px;
+  margin:auto;
+  padding:30px;
 }
-
 .page{display:none}
 .page.active{display:block}
 
+/* DASHBOARD */
 .hero{
- background:
- radial-gradient(circle at 85% 25%,rgba(38,208,240,.18),transparent 30%),
- linear-gradient(135deg,var(--panel),var(--panel2));
- border:1px solid var(--border);
- border-radius:20px;
- padding:32px;
- box-shadow:var(--shadow);
+  border:1px solid #28496d;
+  border-radius:22px;
+  padding:35px;
+  min-height:270px;
+  background:
+    radial-gradient(circle at 90% 20%,rgba(33,212,253,.18),transparent 30%),
+    linear-gradient(135deg,#102744,#0b1a33);
 }
-
+.hero small{color:#7f96b8}
 .hero h1{
- font-size:clamp(30px,5vw,55px);
- line-height:1.05;
- margin:8px 0 14px;
- max-width:700px;
+  font-size:clamp(32px,4vw,52px);
+  max-width:650px;
+  margin:12px 0;
 }
-
-.gradient{
- background:linear-gradient(90deg,var(--primary),var(--secondary));
- -webkit-background-clip:text;
- color:transparent;
+.hero h1 span{color:#21d4fd}
+.hero p{
+  color:#a9bad2;
+  max-width:650px;
+  line-height:1.5;
 }
-
-.muted{color:var(--muted)}
-
-.btn{
- border:0;
- border-radius:9px;
- padding:11px 17px;
- font-weight:700;
- background:linear-gradient(90deg,var(--primary),var(--secondary));
- color:white;
- margin:4px;
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:22px;
 }
-
-.btn.secondary{
- background:var(--panel2);
- border:1px solid var(--border);
- color:var(--text);
+.primary,.secondary{
+  padding:13px 20px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  font-weight:700;
 }
-
-.btn.danger{
- background:var(--danger);
+.primary{
+  background:linear-gradient(90deg,#21c9ee,#745cff);
+  color:white;
+  border:0;
 }
-
-.grid{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:14px;
- margin-top:18px;
+.secondary{
+  background:var(--panel);
+  color:var(--text);
 }
-
+.sectionTitle{
+  margin:28px 0 15px;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
 .card{
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:15px;
- padding:18px;
- box-shadow:var(--shadow);
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
 }
-
-.card h3{margin:0 0 8px}
-
-.stat{
- font-size:28px;
- font-weight:900;
- margin:10px 0;
+.statValue{
+  font-size:30px;
+  font-weight:800;
+  margin:8px 0;
 }
-
-.section-title{
- margin:28px 0 12px;
+.muted{color:var(--muted)}
+.green{color:var(--green)}
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
 }
-
-.tool-grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:16px;
-}
-
-.input,
-textarea,
-select{
- width:100%;
- background:var(--panel2);
- border:1px solid var(--border);
- color:var(--text);
- border-radius:10px;
- padding:12px;
- outline:none;
-}
-
-textarea{min-height:110px;resize:vertical}
-
-.output{
- background:var(--panel2);
- border:1px solid var(--border);
- border-radius:12px;
- padding:16px;
- min-height:100px;
- margin-top:12px;
- white-space:pre-wrap;
-}
-
-.alphabet{
- display:grid;
- grid-template-columns:repeat(6,1fr);
- gap:9px;
- margin-top:15px;
-}
-
-.letter{
- border:1px solid var(--border);
- background:var(--panel2);
- color:var(--text);
- border-radius:10px;
- padding:18px 5px;
- font-size:20px;
- font-weight:900;
-}
-
-.letter:hover,
-.letter.selected{
- background:linear-gradient(135deg,var(--primary),var(--secondary));
- color:white;
-}
-
-.sign-display{
- min-height:170px;
- display:flex;
- align-items:center;
- justify-content:center;
- flex-direction:column;
- background:var(--panel2);
- border:1px solid var(--border);
- border-radius:15px;
- margin-top:15px;
-}
-
-.big-letter{
- font-size:90px;
- font-weight:900;
- color:var(--primary);
-}
-
-.camera{
- width:100%;
- min-height:330px;
- background:#02070d;
- border-radius:15px;
- border:1px solid var(--border);
- overflow:hidden;
- position:relative;
-}
-
-.camera video{
- width:100%;
- height:100%;
- min-height:330px;
- object-fit:cover;
- display:block;
-}
-
-.camera-placeholder{
- position:absolute;
- inset:0;
- display:flex;
- align-items:center;
- justify-content:center;
- flex-direction:column;
- color:#9eb2c6;
- text-align:center;
- padding:20px;
-}
-
-.live-layout{
- display:grid;
- grid-template-columns:1.4fr .8fr;
- gap:18px;
-}
-
-.transcript{
- min-height:180px;
- background:var(--panel2);
- border:1px solid var(--border);
- padding:15px;
- border-radius:12px;
- font-size:20px;
- line-height:1.6;
-}
-
-.feed{
- max-height:330px;
- overflow:auto;
-}
-
-.feed-item{
- padding:12px;
- border-bottom:1px solid var(--border);
-}
-
-.quiz-option{
- width:100%;
- text-align:left;
- margin:6px 0;
- padding:12px;
- background:var(--panel2);
- color:var(--text);
- border:1px solid var(--border);
- border-radius:9px;
-}
-
-.quiz-option.correct{border-color:var(--success)}
-.quiz-option.wrong{border-color:var(--danger)}
-
-.avatar{
- height:330px;
- display:flex;
- align-items:center;
- justify-content:center;
- flex-direction:column;
- background:
- radial-gradient(circle,rgba(38,208,240,.16),transparent 40%),
- var(--panel2);
- border-radius:15px;
- border:1px solid var(--border);
-}
-
-.avatar-head{
- width:115px;
- height:115px;
- border-radius:50%;
- border:5px solid var(--primary);
- display:flex;
- align-items:center;
- justify-content:center;
- font-size:42px;
- font-weight:900;
-}
-
-.avatar-body{
- width:180px;
- height:100px;
- border:5px solid var(--secondary);
- border-radius:70px 70px 15px 15px;
- margin-top:8px;
-}
-
 .progress{
- height:8px;
- background:var(--panel2);
- border-radius:10px;
- overflow:hidden;
- margin-top:10px;
-}
-
-.progress span{
- display:block;
- height:100%;
- background:linear-gradient(90deg,var(--primary),var(--secondary));
-}
-
-.toast{
- position:fixed;
- right:20px;
- bottom:20px;
- background:var(--panel);
- border:1px solid var(--border);
- box-shadow:var(--shadow);
- padding:13px 18px;
- border-radius:10px;
- transform:translateY(100px);
- opacity:0;
- transition:.3s;
- z-index:100;
-}
-
-.toast.show{
- transform:translateY(0);
- opacity:1;
-}
-
-table{
- width:100%;
- border-collapse:collapse;
-}
-
-th,td{
- border-bottom:1px solid var(--border);
- padding:11px;
- text-align:left;
-}
-
-.badge{
- display:inline-block;
- padding:5px 9px;
- border-radius:15px;
- background:rgba(38,208,240,.12);
- color:var(--primary);
- font-size:11px;
-}
-
-.mobile-menu{display:none}
-
-@media(max-width:1000px){
- .grid{grid-template-columns:repeat(2,1fr)}
- .tool-grid,.live-layout{grid-template-columns:1fr}
-}
-
-@media(max-width:720px){
- .sidebar{
-  width:0;
-  padding:0;
+  height:7px;
+  background:#1c304d;
+  border-radius:10px;
   overflow:hidden;
- }
- .sidebar.open{
-  width:245px;
-  padding:18px 12px;
- }
- .main{
-  margin-left:0;
-  width:100%;
- }
- .mobile-menu{
+  margin-top:12px;
+}
+.progress i{
   display:block;
+  height:100%;
+  background:linear-gradient(90deg,#8b5cf6,#21d4fd);
+}
+
+/* GENERAL TOOL */
+.toolHeader{
+  margin-bottom:22px;
+}
+.toolHeader h2{font-size:32px}
+.toolHeader p{color:var(--muted);margin-top:7px}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:22px;
+}
+.input{
+  width:100%;
+  padding:14px;
+  border-radius:11px;
   border:1px solid var(--border);
   background:var(--panel2);
   color:var(--text);
-  padding:8px 10px;
-  border-radius:8px;
- }
- .topbar{padding:8px 10px}
- .search{display:none}
- .content{padding:14px}
- .grid{grid-template-columns:1fr 1fr}
- .alphabet{grid-template-columns:repeat(4,1fr)}
- .hero{padding:22px}
+  outline:none;
+}
+textarea.input{min-height:120px;resize:vertical}
+.row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:12px;
 }
 
-@media(max-width:450px){
- .grid{grid-template-columns:1fr}
- .alphabet{grid-template-columns:repeat(4,1fr)}
+/* LIVE */
+.liveGrid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:18px;
+}
+.camera{
+  min-height:390px;
+  border-radius:15px;
+  background:#020713;
+  border:1px solid #28405f;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  position:relative;
+}
+.camera video{
+  width:100%;
+  height:100%;
+  min-height:390px;
+  object-fit:cover;
+  display:none;
+}
+.cameraText{
+  text-align:center;
+  color:#8093b1;
+  padding:20px;
+}
+video.running{display:block}
+.transcript{
+  min-height:170px;
+  background:var(--panel2);
+  border-radius:12px;
+  padding:16px;
+  line-height:1.7;
+}
+.feed{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.tag{
+  padding:8px 11px;
+  border-radius:20px;
+  background:#172e4d;
+  color:#7eeaff;
+}
+
+/* ALPHABET */
+.alphaGrid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:10px;
+}
+.alpha{
+  aspect-ratio:1;
+  border:1px solid var(--border);
+  background:var(--panel2);
+  border-radius:13px;
+  color:var(--text);
+  font-size:24px;
+  font-weight:800;
+}
+.alpha:hover{
+  background:linear-gradient(135deg,#173f62,#3d2673);
+  border-color:var(--cyan);
+}
+.signDisplay{
+  margin-top:20px;
+  min-height:160px;
+  display:grid;
+  place-items:center;
+  text-align:center;
+}
+
+/* ASK */
+.chat{
+  height:430px;
+  overflow-y:auto;
+  padding:15px;
+  background:var(--panel2);
+  border-radius:14px;
+  margin-bottom:15px;
+}
+.message{
+  max-width:75%;
+  padding:12px 15px;
+  border-radius:13px;
+  margin-bottom:12px;
+  line-height:1.5;
+}
+.bot{
+  background:#162e4b;
+}
+.user{
+  background:linear-gradient(135deg,#5640a8,#167e9d);
+  margin-left:auto;
+}
+.chatInput{
+  display:flex;
+  gap:10px;
+}
+.chatInput .input{flex:1}
+
+/* QUIZ */
+.question{
+  font-size:21px;
+  font-weight:700;
+  margin-bottom:15px;
+}
+.option{
+  width:100%;
+  text-align:left;
+  padding:13px;
+  margin:6px 0;
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+.option:hover{border-color:var(--cyan)}
+
+/* TEACHER */
+.teacherBadge{
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:20px;
+  background:#183b35;
+  color:#54e4b1;
+}
+
+/* MOBILE */
+.mobileMenu{display:none}
+@media(max-width:900px){
+  .layout{display:block}
+  .sidebar{
+    transform:translateX(-100%);
+    transition:.25s;
+  }
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .mobileMenu{display:block}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid3{grid-template-columns:1fr}
+  .liveGrid{grid-template-columns:1fr}
+  .loginContent{grid-template-columns:1fr}
+  .loginHero{text-align:center}
+}
+@media(max-width:550px){
+  .content{padding:15px}
+  .topbar{padding:0 12px}
+  .stats{grid-template-columns:1fr}
+  .alphaGrid{grid-template-columns:repeat(4,1fr)}
+  .hero{padding:22px}
+  .roleGrid{grid-template-columns:1fr}
+}
+
+/* TOAST */
+#toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#122541;
+  color:white;
+  border:1px solid #31527b;
+  padding:13px 17px;
+  border-radius:12px;
+  transform:translateY(100px);
+  opacity:0;
+  transition:.25s;
+  z-index:9999;
+}
+#toast.show{
+  transform:translateY(0);
+  opacity:1;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<!-- ================= LOGIN ================= -->
+<section id="loginPage">
 
+  <!-- Put your uploaded presentation image in the same GitHub folder
+       and name it: login-image.png -->
+  <div class="loginImage"></div>
+  <div class="loginOverlay"></div>
+
+  <div class="loginContent">
+
+    <div class="loginHero">
+      <div class="brand">✋ <b><span>ISL</span></b> — AI Sign Language Interpreter</div>
+
+      <h1>
+        Bridging the Gap<br>
+        with <span class="gradient">AI & ISL</span>
+      </h1>
+
+      <p>
+        Empowering everyone to learn, communicate and grow together.
+        An AI-powered workspace for Indian Sign Language and technical education.
+      </p>
+
+      <div class="actions">
+        <button class="primary" onclick="document.getElementById('loginCard').scrollIntoView({behavior:'smooth'})">
+          ▶ Get Started
+        </button>
+      </div>
+    </div>
+
+    <div class="loginCard" id="loginCard">
+      <h2>Welcome to Abhedya</h2>
+      <p>Select your workspace</p>
+
+      <div class="roleGrid">
+
+        <button class="roleBtn selected" id="studentRole" onclick="selectRole('Student')">
+          <span class="roleIcon">🎓</span>
+          <strong>Student</strong>
+          <small>Learn & practice ISL</small>
+        </button>
+
+        <button class="roleBtn" id="teacherRole" onclick="selectRole('Teacher')">
+          <span class="roleIcon">👨‍🏫</span>
+          <strong>Teacher</strong>
+          <small>Teach & manage lessons</small>
+        </button>
+
+      </div>
+
+      <button class="loginEnter" onclick="login()">
+        Enter Abhedya Workspace →
+      </button>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ================= APP ================= -->
+<div id="app">
+
+<div class="layout">
+
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
 
-<div class="logo">
- <div class="logo-title">ABHEDYA</div>
- <div class="logo-sub">AI INDIAN SIGN LANGUAGE</div>
-</div>
+  <div class="logo">
+    ✋ <span>ABHEDYA</span>
+  </div>
 
-<button class="navbtn active" data-page="dashboard">
- <span class="navicon">HOME</span>Dashboard
-</button>
+  <nav class="nav">
 
-<button class="navbtn" data-page="live">
- <span class="navicon">LIVE</span>Live Interpreter
-</button>
+    <button class="active" onclick="showPage('dashboard',this)">
+      <span class="navIcon">⌂</span> Dashboard
+    </button>
 
-<button class="navbtn" data-page="avatar">
- <span class="navicon">3D</span>3D Sign Avatar
-</button>
+    <button onclick="showPage('live',this)">
+      <span class="navIcon">◉</span> Live Interpreter
+    </button>
 
-<button class="navbtn" data-page="dictionary">
- <span class="navicon">DICT</span>Dictionary & Terms
-</button>
+    <button onclick="showPage('avatar',this)">
+      <span class="navIcon">◌</span> 3D Sign Avatar
+    </button>
 
-<button class="navbtn" data-page="lessons">
- <span class="navicon">LEARN</span>Interactive Lessons
-</button>
+    <button onclick="showPage('dictionary',this)">
+      <span class="navIcon">▣</span> Dictionary & Terms
+    </button>
 
-<button class="navbtn" data-page="quiz">
- <span class="navicon">QUIZ</span>Quiz & Practice
-</button>
+    <button onclick="showPage('lessons',this)">
+      <span class="navIcon">▤</span> Interactive Lessons
+    </button>
 
-<button class="navbtn" data-page="alphabet">
- <span class="navicon">ABC</span>Fingerspelling
-</button>
+    <button onclick="showPage('quiz',this)">
+      <span class="navIcon">?</span> Quiz & Practice
+    </button>
 
-<button class="navbtn" data-page="assistant">
- <span class="navicon">AI</span>ISL Assistant
-</button>
+    <button onclick="showPage('alphabet',this)">
+      <span class="navIcon">ABC</span> Fingerspelling
+    </button>
 
-<button class="navbtn" data-page="photo">
- <span class="navicon">PHOTO</span>Photo Insights
-</button>
+    <button onclick="showPage('assistant',this)">
+      <span class="navIcon">AI</span> ISL Assistant
+    </button>
 
-<button class="navbtn" data-page="history">
- <span class="navicon">HIST</span>Session History
-</button>
+    <button onclick="showPage('photo',this)">
+      <span class="navIcon">▧</span> Photo Insights
+    </button>
 
-<div class="sidebar-bottom">
- <div class="account">
-  <strong>Student Account</strong>
-  <small>Abhedya Workspace</small>
- </div>
- <button class="logout" id="logout">Logout</button>
-</div>
+    <button onclick="showPage('history',this)">
+      <span class="navIcon">◷</span> Session History
+    </button>
+
+  </nav>
+
+  <!-- IMPORTANT:
+       This section is now separate from navigation.
+       It will NOT overlap the logout button. -->
+  <div class="sidebarBottom">
+
+    <div class="account">
+      <div class="avatar" id="accountAvatar">S</div>
+      <div class="accountText">
+        <strong id="accountName">Student Account</strong>
+        <small id="accountRole">Student</small>
+      </div>
+    </div>
+
+    <button class="logout" onclick="logout()">Logout</button>
+
+  </div>
 
 </aside>
 
+
+<!-- MAIN -->
 <main class="main">
 
 <header class="topbar">
- <button class="mobile-menu" id="mobileMenu">MENU</button>
 
- <input class="search" id="globalSearch"
- placeholder="Search lessons, signs, quizzes...">
+  <button class="iconBtn mobileMenu" onclick="toggleSidebar()">☰</button>
 
- <div class="top-spacer"></div>
+  <input
+    class="search"
+    id="globalSearch"
+    placeholder="Search lessons, signs, quizzes..."
+    onkeydown="globalSearch(event)"
+  >
 
- <div class="status">System ready</div>
+  <div class="topActions">
+    <button class="iconBtn" onclick="toggleTheme()" title="Theme">☀</button>
+    <button class="iconBtn" onclick="showToast('System ready ✓')">✓</button>
+  </div>
 
- <button class="theme" id="themeBtn">Light</button>
 </header>
+
 
 <div class="content">
 
-<!-- DASHBOARD -->
+
+<!-- ================= DASHBOARD ================= -->
 <section class="page active" id="dashboard">
 
-<div class="hero">
- <span class="badge">AI-POWERED EDUCATION</span>
+  <div class="hero">
 
- <h1>
- Learn, interpret and communicate with
- <span class="gradient">confidence.</span>
- </h1>
+    <small>AI-POWERED EDUCATION</small>
 
- <p class="muted">
- A professional workspace for Indian Sign Language learning,
- lecture interpretation, technical vocabulary and accessible
- classroom support.
- </p>
+    <h1>
+      Learn, interpret & communicate with
+      <span>confidence.</span>
+    </h1>
 
- <button class="btn" onclick="showPage('live')">
- Start Live Interpreter
- </button>
+    <p>
+      A professional workspace for Indian Sign Language learning,
+      lecture interpretation, practice and accessible classroom support.
+    </p>
 
- <button class="btn secondary" onclick="showPage('lessons')">
- Continue Learning
- </button>
-</div>
+    <div class="actions">
+      <button class="primary" onclick="showPageById('live')">
+        🎙 Start Live Interpreter
+      </button>
 
-<div class="grid">
+      <button class="secondary" onclick="showPageById('lessons')">
+        Continue Learning
+      </button>
+    </div>
 
-<div class="card">
- <h3>Signs Practiced</h3>
- <div class="stat" id="signCount">0</div>
- <small class="muted">This session</small>
-</div>
+  </div>
 
-<div class="card">
- <h3>Learning Progress</h3>
- <div class="stat">72%</div>
- <div class="progress"><span style="width:72%"></span></div>
-</div>
 
-<div class="card">
- <h3>Quiz Mastery</h3>
- <div class="stat" id="quizScore">0%</div>
- <small class="muted">Keep practicing</small>
-</div>
+  <h2 class="sectionTitle">Workspace Overview</h2>
 
-<div class="card">
- <h3>Sessions</h3>
- <div class="stat" id="sessionCount">1</div>
- <small class="muted">Saved locally</small>
-</div>
+  <div class="stats">
 
-</div>
+    <div class="card">
+      <div class="muted">Signs Practiced</div>
+      <div class="statValue" id="signCount">0</div>
+      <div class="green">This session</div>
+    </div>
 
-<h2 class="section-title">Learning Areas</h2>
+    <div class="card">
+      <div class="muted">Learning Progress</div>
+      <div class="statValue">72%</div>
+      <div class="green">+8% this week</div>
+    </div>
 
-<div class="grid">
+    <div class="card">
+      <div class="muted">Quiz Mastery</div>
+      <div class="statValue" id="quizScore">0%</div>
+      <div class="green">Keep practicing</div>
+    </div>
 
-<div class="card">
- <span class="badge">12 TERMS</span>
- <h3>CS & Algorithms</h3>
- <p class="muted">Technical vocabulary for computer science.</p>
- <div class="progress"><span style="width:65%"></span></div>
-</div>
+    <div class="card">
+      <div class="muted">Sessions</div>
+      <div class="statValue" id="sessionCount">1</div>
+      <div class="green">Saved locally</div>
+    </div>
 
-<div class="card">
- <span class="badge">18 TERMS</span>
- <h3>Math & Physics</h3>
- <p class="muted">Academic signs and classroom concepts.</p>
- <div class="progress"><span style="width:58%"></span></div>
-</div>
+  </div>
 
-<div class="card">
- <span class="badge">15 TERMS</span>
- <h3>Classroom Interaction</h3>
- <p class="muted">Everyday educational communication.</p>
- <div class="progress"><span style="width:74%"></span></div>
-</div>
 
-<div class="card">
- <span class="badge">AI</span>
- <h3>Technical ISL</h3>
- <p class="muted">Technical terminology and fingerspelling.</p>
- <div class="progress"><span style="width:61%"></span></div>
-</div>
+  <h2 class="sectionTitle">Learning Mastery</h2>
 
-</div>
+  <div class="grid3">
+
+    <div class="card">
+      <b>Vocabulary</b>
+      <div class="progress"><i style="width:82%"></i></div>
+      <small class="muted">82%</small>
+    </div>
+
+    <div class="card">
+      <b>Fingerspelling</b>
+      <div class="progress"><i style="width:68%"></i></div>
+      <small class="muted">68%</small>
+    </div>
+
+    <div class="card">
+      <b>Technical Signs</b>
+      <div class="progress"><i style="width:61%"></i></div>
+      <small class="muted">61%</small>
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- LIVE -->
+<!-- ================= LIVE ================= -->
 <section class="page" id="live">
 
-<h1>Live ISL Interpreter</h1>
-<p class="muted">
- Convert speech into a classroom-friendly transcript and sign concepts.
-</p>
-
-<div class="live-layout">
-
-<div>
-
-<div class="camera">
- <video id="camera" autoplay muted playsinline></video>
-
- <div class="camera-placeholder" id="cameraPlaceholder">
-  <strong>Camera is ready</strong>
-  <p>Start camera to use the live workspace.</p>
- </div>
- </div>
-
- <button class="btn" id="cameraStart">Start Camera</button>
- <button class="btn secondary" id="cameraStop">Stop Camera</button>
- <button class="btn secondary" id="micStart">Start Microphone</button>
-
- <div class="card" style="margin-top:15px">
-  <h3>Transcript</h3>
-  <div class="transcript" id="transcript">
-   Waiting for speech...
+  <div class="toolHeader">
+    <h2>Live ISL Interpreter</h2>
+    <p>Use your camera or microphone for the demonstration.</p>
   </div>
- </div>
 
-</div>
+  <div class="liveGrid">
 
-<div class="card">
- <h3>Detected Sign Concepts</h3>
+    <div class="panel">
 
- <div class="feed" id="signFeed">
-  <div class="feed-item">
-   System ready
+      <div class="camera">
+        <video id="cameraVideo" autoplay muted playsinline></video>
+
+        <div class="cameraText" id="cameraText">
+          <div style="font-size:50px">📷</div>
+          <h3>Camera Preview</h3>
+          <p>Start the camera to begin the demonstration.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="primary" onclick="startCamera()">Start Camera</button>
+        <button class="secondary" onclick="stopCamera()">Stop Camera</button>
+        <button class="secondary" onclick="startSpeech()">🎙 Speak</button>
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h3>Live Transcript</h3>
+
+      <div class="transcript" id="transcript">
+        System ready. Press Speak or use Demo Lecture.
+      </div>
+
+      <h3 style="margin-top:18px">Detected Signs</h3>
+
+      <div class="feed" id="signFeed">
+        <span class="tag">Ready</span>
+      </div>
+
+      <div class="row">
+        <button class="primary" onclick="demoLecture()">▶ Demo Lecture</button>
+        <button class="secondary" onclick="clearTranscript()">Clear</button>
+      </div>
+
+    </div>
+
   </div>
- </div>
-
- <hr style="border-color:var(--border);margin:18px 0">
-
- <h3>Demo Lecture</h3>
-
- <p class="muted">
- Click below to simulate a technical lecture.
- </p>
-
- <button class="btn" id="demoLecture">
- Run Demo Lecture
- </button>
-
- <button class="btn secondary" id="clearTranscript">
- Clear
- </button>
-
-</div>
-
-</div>
 
 </section>
 
 
-<!-- AVATAR -->
+<!-- ================= AVATAR ================= -->
 <section class="page" id="avatar">
 
-<h1>3D Sign Avatar</h1>
-<p class="muted">
- Demonstration avatar for educational sign visualization.
- </p>
+  <div class="toolHeader">
+    <h2>3D Sign Avatar</h2>
+    <p>Demonstration interface for converting text into ISL avatar actions.</p>
+  </div>
 
-<div class="tool-grid">
+  <div class="panel">
 
-<div class="avatar">
+    <div style="font-size:100px;text-align:center;padding:25px">🧑‍💻</div>
 
- <div class="avatar-head" id="avatarHead">A</div>
- <div class="avatar-body"></div>
+    <h2 style="text-align:center" id="avatarSign">HELLO</h2>
 
- <h3 id="avatarWord">Alphabet A</h3>
+    <p class="muted" style="text-align:center;margin-top:8px">
+      Virtual ISL Avatar
+    </p>
 
-</div>
+    <div class="row">
+      <input class="input" id="avatarInput" placeholder="Enter a word...">
+      <button class="primary" onclick="playAvatar()">Show Sign</button>
+    </div>
 
-<div class="card">
-
-<h3>Avatar Controls</h3>
-
-<select id="avatarSelect" class="input">
- <option value="A">A - Alphabet</option>
- <option value="HELLO">HELLO</option>
- <option value="STUDENT">STUDENT</option>
- <option value="TEACHER">TEACHER</option>
- <option value="ALGORITHM">ALGORITHM</option>
- <option value="NETWORK">NETWORK</option>
- <option value="COMPUTER">COMPUTER</option>
- </select>
-
-<button class="btn" id="playAvatar">Play Sign</button>
-
-<div class="output" id="avatarOutput">
- Select a concept and press Play Sign.
-</div>
-
-</div>
-
-</div>
+  </div>
 
 </section>
 
 
-<!-- DICTIONARY -->
+<!-- ================= DICTIONARY ================= -->
 <section class="page" id="dictionary">
 
-<h1>Dictionary & Technical Terms</h1>
+  <div class="toolHeader">
+    <h2>Dictionary & Technical Terms</h2>
+    <p>Search common academic and technical vocabulary.</p>
+  </div>
 
-<input class="input" id="dictSearch"
- placeholder="Search technical term...">
+  <div class="panel">
 
-<div class="grid" id="dictionaryGrid"></div>
+    <input
+      class="input"
+      id="dictionaryInput"
+      placeholder="Search e.g. algorithm, network, computer..."
+      oninput="dictionarySearch()"
+    >
+
+    <div class="grid3" id="dictionaryResults" style="margin-top:18px"></div>
+
+  </div>
 
 </section>
 
 
-<!-- LESSONS -->
+<!-- ================= LESSONS ================= -->
 <section class="page" id="lessons">
 
-<h1>Interactive Lessons</h1>
+  <div class="toolHeader">
+    <h2>Interactive Lessons</h2>
+    <p>Practice useful signs for technical education.</p>
+  </div>
 
-<div class="grid">
+  <div class="grid3">
 
-<div class="card">
- <span class="badge">BEGINNER</span>
- <h3>ISL Alphabet</h3>
- <p class="muted">Learn letters and fingerspelling.</p>
- <button class="btn" onclick="showPage('alphabet')">Open</button>
-</div>
+    <div class="card">
+      <h3>💻 Computer Science</h3>
+      <p class="muted">Algorithm, data, computer, code, program.</p>
+      <button class="primary" style="margin-top:15px" onclick="lesson('Computer Science')">
+        Start
+      </button>
+    </div>
 
-<div class="card">
- <span class="badge">TECHNICAL</span>
- <h3>Computer Science</h3>
- <p class="muted">Algorithms, databases, networks and software.</p>
- <button class="btn" onclick="lesson('Computer Science')">Start</button>
-</div>
+    <div class="card">
+      <h3>🌐 Networking</h3>
+      <p class="muted">Network, server, internet, IP, security.</p>
+      <button class="primary" style="margin-top:15px" onclick="lesson('Networking')">
+        Start
+      </button>
+    </div>
 
-<div class="card">
- <span class="badge">CLASSROOM</span>
- <h3>Lecture Communication</h3>
- <p class="muted">Practice classroom terminology.</p>
- <button class="btn" onclick="lesson('Classroom Communication')">Start</button>
-</div>
+    <div class="card">
+      <h3>📐 Mathematics</h3>
+      <p class="muted">Formula, equation, number, calculation.</p>
+      <button class="primary" style="margin-top:15px" onclick="lesson('Mathematics')">
+        Start
+      </button>
+    </div>
 
-<div class="card">
- <span class="badge">ADVANCED</span>
- <h3>Technical Vocabulary</h3>
- <p class="muted">Practice specialized terminology.</p>
- <button class="btn" onclick="lesson('Technical Vocabulary')">Start</button>
-</div>
-
-</div>
-
-<div class="output" id="lessonOutput">
- Select a lesson to begin.
-</div>
+  </div>
 
 </section>
 
 
-<!-- QUIZ -->
+<!-- ================= QUIZ ================= -->
 <section class="page" id="quiz">
 
-<h1>Quiz & Practice</h1>
+  <div class="toolHeader">
+    <h2>Quiz & Practice</h2>
+    <p>Test your technical vocabulary knowledge.</p>
+  </div>
 
-<div class="card">
+  <div class="panel">
 
-<div class="badge" id="quizNumber">Question 1</div>
+    <div class="question" id="question">
+      What does CPU stand for?
+    </div>
 
-<h2 id="question">Which concept describes a sequence of steps used to solve a problem?</h2>
+    <div id="options"></div>
 
-<div id="options"></div>
+    <button class="primary" onclick="nextQuestion()" style="margin-top:15px">
+      Next Question
+    </button>
 
-<div class="output" id="quizFeedback">
- Choose an answer.
-</div>
-
-<button class="btn" id="nextQuestion">Next Question</button>
-
-</div>
+  </div>
 
 </section>
 
 
-<!-- ALPHABET -->
+<!-- ================= ALPHABET ================= -->
 <section class="page" id="alphabet">
 
-<h1>Fingerspelling & Alphabet</h1>
+  <div class="toolHeader">
+    <h2>Fingerspelling — Alphabet</h2>
+    <p>Select a letter to practice its ISL fingerspelling representation.</p>
+  </div>
 
-<p class="muted">
- Select a letter to practice it.
- </p>
+  <div class="panel">
 
-<div class="sign-display">
+    <div class="alphaGrid" id="alphabetGrid"></div>
 
-<div class="big-letter" id="selectedLetter">A</div>
+    <div class="signDisplay card" id="signDisplay">
+      <div>
+        <div style="font-size:55px">✋</div>
+        <h2>Select a letter</h2>
+      </div>
+    </div>
 
-<strong id="letterName">Letter A</strong>
+    <div class="row">
 
-<p class="muted" id="letterInfo">
- Practice the selected alphabet sign.
- </p>
+      <input
+        class="input"
+        id="spellInput"
+        maxlength="30"
+        placeholder="Type a word to spell..."
+      >
 
-</div>
+      <button class="primary" onclick="spellWord()">Spell</button>
 
-<div class="alphabet" id="alphabetGrid"></div>
+    </div>
 
-<h2>Spell a Word</h2>
+    <div class="feed" id="spellOutput"></div>
 
-<input class="input" id="spellInput" placeholder="Type a word">
-
-<button class="btn" id="spellBtn">Generate Fingerspelling</button>
-
-<div class="output" id="spellOutput">
- Your fingerspelling will appear here.
-</div>
+  </div>
 
 </section>
 
 
-<!-- ASSISTANT -->
+<!-- ================= ASSISTANT ================= -->
 <section class="page" id="assistant">
 
-<h1>Ask ISL Assistant</h1>
+  <div class="toolHeader">
+    <h2>ISL Assistant</h2>
+    <p>Ask questions about ISL, accessibility and technical vocabulary.</p>
+  </div>
 
-<p class="muted">
- Ask about ISL, technical vocabulary or classroom communication.
- </p>
+  <div class="panel">
 
-<div class="card">
+    <div class="chat" id="chat">
 
-<textarea id="askInput"
- placeholder="Example: What is an algorithm?"></textarea>
+      <div class="message bot">
+        Hello! I am Abhedya ISL Assistant. Ask me about signs,
+        technical education or the interpreter workflow.
+      </div>
 
-<br>
+    </div>
 
-<button class="btn" id="askBtn">Ask ISL</button>
+    <div class="chatInput">
 
-<button class="btn secondary" id="askMic">Use Microphone</button>
+      <input
+        class="input"
+        id="askInput"
+        placeholder="Ask something..."
+        onkeydown="if(event.key==='Enter')askISL()"
+      >
 
-<div class="output" id="askOutput">
- Assistant ready.
-</div>
+      <button class="primary" onclick="askISL()">Send</button>
 
-</div>
+    </div>
 
-<div class="grid">
-
-<div class="card">
- <h3>Technical Terms</h3>
- <p class="muted">Algorithm, database, network, cloud, software.</p>
-</div>
-
-<div class="card">
- <h3>Classroom Help</h3>
- <p class="muted">Use the assistant to understand learning terminology.</p>
-</div>
-
-</div>
+  </div>
 
 </section>
 
 
-<!-- PHOTO -->
+<!-- ================= PHOTO ================= -->
 <section class="page" id="photo">
 
-<h1>Photo Insights</h1>
+  <div class="toolHeader">
+    <h2>Photo Insights</h2>
+    <p>Upload an image for a prototype analysis interface.</p>
+  </div>
 
-<div class="card">
+  <div class="panel">
 
-<input type="file" id="photoInput" accept="image/*" class="input">
+    <input
+      type="file"
+      id="photoInput"
+      accept="image/*"
+      onchange="previewPhoto(event)"
+    >
 
-<div id="photoPreview" class="output">
- Select an image for the local demo.
-</div>
+    <div id="photoResult" style="margin-top:20px;text-align:center"></div>
 
-<button class="btn" id="analyzePhoto">
-Analyze Photo
-</button>
-
-<div class="output" id="photoOutput">
- No image analyzed.
-</div>
-
-</div>
+  </div>
 
 </section>
 
 
-<!-- HISTORY -->
+<!-- ================= HISTORY ================= -->
 <section class="page" id="history">
 
-<h1>Session History</h1>
+  <div class="toolHeader">
+    <h2>Session History</h2>
+    <p>Your local prototype activity.</p>
+  </div>
 
-<div class="card">
+  <div class="panel">
 
-<table>
+    <div id="historyList">
+      No sessions recorded yet.
+    </div>
 
-<thead>
-<tr>
-<th>Time</th>
-<th>Activity</th>
-<th>Details</th>
-</tr>
-</thead>
+    <button class="secondary" onclick="clearHistory()" style="margin-top:15px">
+      Clear History
+    </button>
 
-<tbody id="historyTable"></tbody>
-
-</table>
-
-<br>
-
-<button class="btn danger" id="clearHistory">
-Clear History
-</button>
-
-</div>
+  </div>
 
 </section>
 
 </div>
 </main>
 </div>
+</div>
 
-<div class="toast" id="toast"></div>
+
+<div id="toast"></div>
 
 
 <script>
-/* ================================
+
+/* =========================================================
    ABHEDYA APPLICATION
-================================ */
+========================================================= */
 
-const $ = id => document.getElementById(id);
+let selectedRole = "Student";
+let cameraStream = null;
+let signsPracticed = 0;
+let currentQuestion = 0;
+let quizPoints = 0;
 
-const pages = document.querySelectorAll(".page");
-const navButtons = document.querySelectorAll(".navbtn");
-
-function toast(message){
- const t=$("toast");
- t.textContent=message;
- t.classList.add("show");
- setTimeout(()=>t.classList.remove("show"),2200);
-}
-
-function saveHistory(activity,details){
- const history=JSON.parse(localStorage.getItem("abhedya_history")||"[]");
-
- history.unshift({
-  time:new Date().toLocaleString(),
-  activity,
-  details
- });
-
- localStorage.setItem(
-  "abhedya_history",
-  JSON.stringify(history.slice(0,50))
- );
-
- renderHistory();
-}
-
-function renderHistory(){
-
- const body=$("historyTable");
-
- if(!body)return;
-
- const history=JSON.parse(
-  localStorage.getItem("abhedya_history")||"[]"
- );
-
- body.innerHTML="";
-
- if(!history.length){
-  body.innerHTML="<tr><td colspan='3'>No sessions yet.</td></tr>";
-  return;
- }
-
- history.forEach(item=>{
-  const tr=document.createElement("tr");
-
-  tr.innerHTML=
-   "<td>"+escapeHtml(item.time)+"</td>"+
-   "<td>"+escapeHtml(item.activity)+"</td>"+
-   "<td>"+escapeHtml(item.details)+"</td>";
-
-  body.appendChild(tr);
- });
-}
-
-function escapeHtml(value){
- return String(value)
-  .replaceAll("&","&amp;")
-  .replaceAll("<","&lt;")
-  .replaceAll(">","&gt;")
-  .replaceAll('"',"&quot;");
-}
-
-function showPage(id){
-
- pages.forEach(p=>{
-  p.classList.toggle("active",p.id===id);
- });
-
- navButtons.forEach(b=>{
-  b.classList.toggle(
-   "active",
-   b.dataset.page===id
-  );
- });
-
- window.scrollTo({top:0,behavior:"smooth"});
-
- if(window.innerWidth<=720){
-  $("sidebar").classList.remove("open");
- }
-}
-
-navButtons.forEach(button=>{
- button.addEventListener("click",()=>{
-  showPage(button.dataset.page);
- });
-});
-
-$("mobileMenu").addEventListener("click",()=>{
- $("sidebar").classList.toggle("open");
-});
-
-
-/* ================================
-   THEME
-================================ */
-
-function setTheme(theme){
-
- document.documentElement.setAttribute(
-  "data-theme",
-  theme
- );
-
- localStorage.setItem(
-  "abhedya_theme",
-  theme
- );
-
- $("themeBtn").textContent=
-  theme==="light" ? "Dark" : "Light";
-}
-
-const savedTheme=
- localStorage.getItem("abhedya_theme")||"dark";
-
-setTheme(savedTheme);
-
-$("themeBtn").addEventListener("click",()=>{
-
- const current=
-  document.documentElement.getAttribute("data-theme");
-
- setTheme(current==="light"?"dark":"light");
-
- toast("Theme changed");
-});
-
-
-/* ================================
-   ALPHABET
-================================ */
-
-const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-letters.forEach(letter=>{
-
- const button=document.createElement("button");
-
- button.className="letter";
- button.textContent=letter;
-
- button.addEventListener("click",()=>{
-
-  document.querySelectorAll(".letter")
-   .forEach(x=>x.classList.remove("selected"));
-
-  button.classList.add("selected");
-
-  $("selectedLetter").textContent=letter;
-  $("letterName").textContent="Letter "+letter;
-  $("letterInfo").textContent=
-   "Practice the ISL fingerspelling sign for "+letter+".";
-
-  saveHistory("Alphabet",letter);
-  updateSignCount();
-
- });
-
- $("alphabetGrid").appendChild(button);
-});
-
-
-$("spellBtn").addEventListener("click",()=>{
-
- const word=$("spellInput").value
-  .trim()
-  .toUpperCase();
-
- if(!word){
-  toast("Enter a word first");
-  return;
- }
-
- const lettersOnly=
-  word.replace(/[^A-Z ]/g,"");
-
- $("spellOutput").innerHTML=
-  lettersOnly
-   .split("")
-   .map(c=>c===" "
-    ? "<span style='display:inline-block;width:15px'></span>"
-    : "<button class='letter' style='display:inline-block;margin:4px'>"+c+"</button>"
-   )
-   .join("");
-
- saveHistory("Fingerspelling",lettersOnly);
- updateSignCount();
-
-});
-
-
-/* ================================
-   DICTIONARY
-================================ */
-
-const terms=[
- ["Algorithm","A sequence of logical steps used to solve a problem."],
- ["Database","An organized collection of structured information."],
- ["Network","Connected devices that communicate with each other."],
- ["Cloud Computing","Computing resources delivered through a network."],
- ["Artificial Intelligence","Technology that performs tasks requiring intelligent behavior."],
- ["Machine Learning","A method where systems learn patterns from data."],
- ["Cybersecurity","Protection of systems, networks and information."],
- ["Software","Programs and instructions executed by a computer."],
- ["Hardware","Physical components of a computing system."],
- ["Internet","A global network connecting computer systems."]
+const quizData = [
+  {
+    q:"What does CPU stand for?",
+    options:["Central Processing Unit","Computer Personal Unit","Central Program Utility","Control Processing User"],
+    answer:0
+  },
+  {
+    q:"Which device connects different networks?",
+    options:["Router","Keyboard","Monitor","Printer"],
+    answer:0
+  },
+  {
+    q:"What is an algorithm?",
+    options:["A step-by-step procedure","A computer screen","A network cable","A database only"],
+    answer:0
+  },
+  {
+    q:"What does AI stand for?",
+    options:["Artificial Intelligence","Automatic Internet","Advanced Input","Application Interface"],
+    answer:0
+  }
 ];
 
-function renderDictionary(filter=""){
-
- const grid=$("dictionaryGrid");
-
- grid.innerHTML="";
-
- terms
- .filter(x=>
-  x[0].toLowerCase().includes(filter.toLowerCase())
- )
- .forEach(term=>{
-
-  const card=document.createElement("div");
-
-  card.className="card";
-
-  card.innerHTML=
-   "<span class='badge'>TECHNICAL TERM</span>"+
-   "<h3>"+term[0]+"</h3>"+
-   "<p class='muted'>"+term[1]+"</p>"+
-   "<button class='btn' onclick=\"showTerm('"+
-   term[0].replaceAll("'","")+
-   "')\">View Sign</button>";
-
-  grid.appendChild(card);
- });
-}
-
-function showTerm(term){
-
- $("avatarSelect").value=
-  ["HELLO","STUDENT","TEACHER","ALGORITHM","NETWORK","COMPUTER"]
-  .includes(term.toUpperCase())
-  ? term.toUpperCase()
-  : "A";
-
- $("avatarHead").textContent=
-  term.charAt(0).toUpperCase();
-
- $("avatarWord").textContent=term;
-
- $("avatarOutput").textContent=
-  "ISL demonstration selected for: "+term+
-  ". Use the avatar as a prototype visualization.";
-
- showPage("avatar");
-
- saveHistory("Dictionary",term);
-}
-
-renderDictionary();
-
-$("dictSearch").addEventListener("input",e=>{
- renderDictionary(e.target.value);
-});
+const dictionary = [
+  ["Algorithm","A step-by-step procedure used to solve a problem."],
+  ["Computer","An electronic device that processes information."],
+  ["Network","A group of connected devices."],
+  ["Internet","A global network of interconnected computers."],
+  ["Database","An organized collection of data."],
+  ["Security","Protection of systems, networks and information."],
+  ["Server","A computer/system that provides services to clients."],
+  ["Programming","The process of creating computer instructions."],
+  ["Artificial Intelligence","Technology that enables machines to perform intelligent tasks."],
+  ["Cloud Computing","Delivery of computing resources through a network."],
+  ["Data","Information processed or stored by a computer."],
+  ["Software","Programs and instructions used by a computer."]
+];
 
 
-/* ================================
-   LESSONS
-================================ */
+/* LOGIN */
 
-function lesson(name){
+function selectRole(role){
 
- $("lessonOutput").textContent=
-  "Lesson started: "+name+
-  "\n\nPractice the vocabulary, then test your understanding in Quiz & Practice.";
+  selectedRole = role;
 
- saveHistory("Lesson",name);
- toast("Lesson started");
+  document.getElementById("studentRole").classList.toggle(
+    "selected",role==="Student"
+  );
+
+  document.getElementById("teacherRole").classList.toggle(
+    "selected",role==="Teacher"
+  );
 }
 
 
-/* ================================
-   AVATAR
-================================ */
+function login(){
 
-$("playAvatar").addEventListener("click",()=>{
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("app").style.display="block";
 
- const value=$("avatarSelect").value;
+  document.getElementById("accountName").textContent =
+    selectedRole+" Account";
 
- const labels={
-  A:"Alphabet A",
-  HELLO:"Hello",
-  STUDENT:"Student",
-  TEACHER:"Teacher",
-  ALGORITHM:"Algorithm",
-  NETWORK:"Network",
-  COMPUTER:"Computer"
- };
+  document.getElementById("accountRole").textContent =
+    selectedRole;
 
- $("avatarHead").textContent=
-  value==="HELLO"?"HI":
-  value==="STUDENT"?"S":
-  value==="TEACHER"?"T":
-  value==="ALGORITHM"?"A":
-  value==="NETWORK"?"N":
-  value==="COMPUTER"?"C":"A";
+  document.getElementById("accountAvatar").textContent =
+    selectedRole==="Teacher" ? "T" : "S";
 
- $("avatarWord").textContent=labels[value];
+  localStorage.setItem("abhedyaRole",selectedRole);
 
- $("avatarOutput").textContent=
-  "Playing sign concept: "+labels[value];
+  saveHistory("Logged in as "+selectedRole);
 
- saveHistory("3D Avatar",labels[value]);
- updateSignCount();
+  showToast("Welcome to Abhedya, "+selectedRole+"!");
 
- toast("Sign animation started");
-});
+}
 
 
-/* ================================
-   LIVE CAMERA
-================================ */
+function logout(){
 
-let stream=null;
+  if(cameraStream){
+    cameraStream.getTracks().forEach(track=>track.stop());
+    cameraStream=null;
+  }
 
-$("cameraStart").addEventListener("click",async()=>{
+  document.getElementById("app").style.display="none";
+  document.getElementById("loginPage").style.display="flex";
 
- try{
+  showToast("Logged out successfully");
 
-  stream=await navigator.mediaDevices.getUserMedia({
-   video:true,
-   audio:false
+}
+
+
+/* NAVIGATION */
+
+function showPage(id,button){
+
+  document.querySelectorAll(".page").forEach(
+    p=>p.classList.remove("active")
+  );
+
+  const page=document.getElementById(id);
+
+  if(page) page.classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(
+    b=>b.classList.remove("active")
+  );
+
+  if(button) button.classList.add("active");
+
+  document.getElementById("sidebar").classList.remove("open");
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+
+function showPageById(id){
+
+  const page=document.getElementById(id);
+
+  if(!page)return;
+
+  document.querySelectorAll(".page").forEach(
+    p=>p.classList.remove("active")
+  );
+
+  page.classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.remove("active");
+
+    if(b.getAttribute("onclick") &&
+       b.getAttribute("onclick").includes("'"+id+"'")){
+      b.classList.add("active");
+    }
   });
 
-  $("camera").srcObject=stream;
-  $("cameraPlaceholder").style.display="none";
-
-  toast("Camera started");
-  saveHistory("Camera","Started");
-
- }catch(error){
-
-  toast("Camera permission unavailable");
-
-  $("cameraPlaceholder").innerHTML=
-   "<strong>Camera unavailable</strong>"+
-   "<p>Allow camera permission or use Demo Lecture.</p>";
- }
-});
-
-$("cameraStop").addEventListener("click",()=>{
-
- if(stream){
-
-  stream.getTracks().forEach(track=>track.stop());
-  stream=null;
- }
-
- $("camera").srcObject=null;
- $("cameraPlaceholder").style.display="flex";
-
- toast("Camera stopped");
-});
+  window.scrollTo({top:0,behavior:"smooth"});
+}
 
 
-/* ================================
-   MICROPHONE
-================================ */
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("open");
+}
 
-let recognition=null;
+
+/* THEME */
+
+function toggleTheme(){
+
+  const root=document.documentElement;
+
+  if(root.getAttribute("data-theme")==="light"){
+    root.removeAttribute("data-theme");
+    localStorage.setItem("abhedyaTheme","dark");
+    showToast("Dark theme enabled");
+  }else{
+    root.setAttribute("data-theme","light");
+    localStorage.setItem("abhedyaTheme","light");
+    showToast("Light theme enabled");
+  }
+
+}
+
+
+/* CAMERA */
+
+async function startCamera(){
+
+  const video=document.getElementById("cameraVideo");
+  const text=document.getElementById("cameraText");
+
+  if(!navigator.mediaDevices ||
+     !navigator.mediaDevices.getUserMedia){
+
+    showToast("Camera is not supported by this browser.");
+    return;
+  }
+
+  try{
+
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:true,
+      audio:false
+    });
+
+    video.srcObject=cameraStream;
+    video.classList.add("running");
+    text.style.display="none";
+
+    showToast("Camera started");
+
+    saveHistory("Camera started");
+
+  }catch(error){
+
+    showToast("Camera permission was denied or unavailable.");
+
+  }
+}
+
+
+function stopCamera(){
+
+  if(cameraStream){
+
+    cameraStream.getTracks().forEach(
+      track=>track.stop()
+    );
+
+    cameraStream=null;
+  }
+
+  const video=document.getElementById("cameraVideo");
+
+  video.srcObject=null;
+  video.classList.remove("running");
+
+  document.getElementById("cameraText").style.display="block";
+
+  showToast("Camera stopped");
+}
+
+
+/* SPEECH */
 
 function startSpeech(){
 
- const SpeechRecognition=
-  window.SpeechRecognition||
-  window.webkitSpeechRecognition;
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
 
- if(!SpeechRecognition){
+  if(!SpeechRecognition){
 
-  toast("Speech recognition is not supported");
-  return;
- }
-
- recognition=new SpeechRecognition();
-
- recognition.lang="en-IN";
- recognition.continuous=true;
- recognition.interimResults=true;
-
- recognition.onresult=e=>{
-
-  let finalText="";
-
-  for(let i=e.resultIndex;i<e.results.length;i++){
-
-   finalText+=
-    e.results[i][0].transcript;
+    showToast("Speech recognition is not supported. Use Chrome.");
+    return;
   }
 
-  $("transcript").textContent=finalText;
+  const recognition=new SpeechRecognition();
 
-  detectSigns(finalText);
- };
+  recognition.lang="en-IN";
+  recognition.interimResults=false;
 
- recognition.onerror=()=>{
-  toast("Microphone recognition stopped");
- };
-
- recognition.start();
-
- toast("Microphone listening");
- saveHistory("Microphone","Started");
-}
-
-$("micStart").addEventListener("click",startSpeech);
-
-
-/* ================================
-   SIGN DETECTION DEMO
-================================ */
-
-function detectSigns(text){
-
- const words=text
-  .toLowerCase()
-  .split(/\s+/);
-
- const keywords=[
-  "algorithm",
-  "computer",
-  "student",
-  "teacher",
-  "network",
-  "database",
-  "cloud",
-  "software",
-  "hello",
-  "learn"
- ];
-
- const found=
-  keywords.filter(k=>words.includes(k));
-
- if(found.length){
-
-  found.forEach(word=>{
-
-   const item=document.createElement("div");
-
-   item.className="feed-item";
-
-   item.innerHTML=
-    "<strong>"+word.toUpperCase()+"</strong>"+
-    "<br><small>Technical ISL concept detected</small>";
-
-   $("signFeed").prepend(item);
-  });
-
-  updateSignCount();
- }
-}
-
-
-/* ================================
-   DEMO LECTURE
-================================ */
-
-$("demoLecture").addEventListener("click",()=>{
-
- const sentences=[
-  "Today we will learn about algorithms.",
-  "An algorithm is a sequence of steps.",
-  "Computers use algorithms to solve problems.",
-  "Networks connect different computer systems.",
-  "Students can practice technical signs."
- ];
-
- let i=0;
-
- $("transcript").textContent="";
-
- const timer=setInterval(()=>{
-
-  if(i>=sentences.length){
-
-   clearInterval(timer);
-
-   saveHistory(
-    "Demo Lecture",
-    "Technical computer science lecture"
-   );
-
-   return;
-  }
-
-  $("transcript").textContent+=
-   (i?"\n":"")+sentences[i];
-
-  detectSigns(sentences[i]);
-
-  i++;
-
- },1200);
-
- toast("Demo lecture started");
-});
-
-
-$("clearTranscript").addEventListener("click",()=>{
-
- $("transcript").textContent=
-  "Waiting for speech...";
-
- $("signFeed").innerHTML=
-  "<div class='feed-item'>System ready</div>";
-});
-
-
-/* ================================
-   ASK ISL
-================================ */
-
-function assistantAnswer(question){
-
- const q=question.toLowerCase();
-
- if(q.includes("algorithm")){
-  return "Algorithm: a logical sequence of steps used to solve a problem. In the prototype, the term can be shown using the technical vocabulary and avatar modules.";
- }
-
- if(q.includes("database")){
-  return "Database: an organized collection of information that can be stored, searched and managed by software.";
- }
-
- if(q.includes("network")){
-  return "Network: a group of connected devices that communicate and exchange data.";
- }
-
- if(q.includes("cloud")){
-  return "Cloud computing provides computing resources such as storage, servers and applications through a network.";
- }
-
- if(q.includes("isl")||q.includes("sign language")){
-  return "ISL means Indian Sign Language. Abhedya is designed as an educational prototype for learning, classroom interpretation and technical terminology.";
- }
-
- if(q.includes("computer")){
-  return "A computer is an electronic system that processes data according to instructions called software.";
- }
-
- if(q.includes("hello")){
-  return "For the prototype, Hello is available as a basic sign concept in the avatar module.";
- }
-
- return "I can help with ISL learning, technical vocabulary, algorithms, databases, networks, cloud computing and classroom terminology.";
-}
-
-$("askBtn").addEventListener("click",()=>{
-
- const q=$("askInput").value.trim();
-
- if(!q){
-  toast("Enter a question");
-  return;
- }
-
- $("askOutput").textContent=
-  assistantAnswer(q);
-
- saveHistory("Ask ISL",q);
-});
-
-$("askMic").addEventListener("click",()=>{
-
- const SpeechRecognition=
-  window.SpeechRecognition||
-  window.webkitSpeechRecognition;
-
- if(!SpeechRecognition){
-  toast("Speech recognition unavailable");
-  return;
- }
-
- const r=new SpeechRecognition();
-
- r.lang="en-IN";
- r.interimResults=false;
-
- r.onresult=e=>{
-  $("askInput").value=
-   e.results[0][0].transcript;
-
-  $("askBtn").click();
- };
-
- r.start();
-
- toast("Speak your question");
-});
-
-
-/* ================================
-   PHOTO
-================================ */
-
-let selectedPhoto=null;
-
-$("photoInput").addEventListener("change",e=>{
-
- const file=e.target.files[0];
-
- if(!file)return;
-
- selectedPhoto=file;
-
- const reader=new FileReader();
-
- reader.onload=event=>{
-
-  $("photoPreview").innerHTML=
-   "<img src='"+event.target.result+
-   "' style='max-width:100%;max-height:350px;border-radius:10px'>";
-
- };
-
- reader.readAsDataURL(file);
-});
-
-$("analyzePhoto").addEventListener("click",()=>{
-
- if(!selectedPhoto){
-
-  toast("Select a photo first");
-  return;
- }
-
- $("photoOutput").textContent=
-  "Photo loaded successfully.\n\n"+
-  "Prototype insight: image analysis module is ready "+
-  "for integration with a computer-vision model. "+
-  "The current local demo confirms the upload workflow.";
-
- saveHistory("Photo Insights",selectedPhoto.name);
-
-});
-
-
-/* ================================
-   QUIZ
-================================ */
-
-const quiz=[
- {
-  q:"Which concept describes a sequence of steps used to solve a problem?",
-  options:["Algorithm","Database","Monitor","Keyboard"],
-  answer:"Algorithm"
- },
- {
-  q:"Which component stores organized information?",
-  options:["Database","Mouse","Monitor","Speaker"],
-  answer:"Database"
- },
- {
-  q:"What connects computers so they can communicate?",
-  options:["Network","Printer","Keyboard","RAM"],
-  answer:"Network"
- },
- {
-  q:"Which technology provides computing resources through a network?",
-  options:["Cloud Computing","Fingerspelling","Compiler","Keyboard"],
-  answer:"Cloud Computing"
- }
-];
-
-let quizIndex=0;
-let quizCorrect=0;
-
-function renderQuiz(){
-
- const item=quiz[quizIndex];
-
- $("quizNumber").textContent=
-  "Question "+(quizIndex+1)+" / "+quiz.length;
-
- $("question").textContent=item.q;
-
- $("quizFeedback").textContent=
-  "Choose an answer.";
-
- $("options").innerHTML="";
-
- item.options.forEach(option=>{
-
-  const button=document.createElement("button");
-
-  button.className="quiz-option";
-  button.textContent=option;
-
-  button.onclick=()=>{
-
-   document.querySelectorAll(".quiz-option")
-    .forEach(x=>x.disabled=true);
-
-   if(option===item.answer){
-
-    button.classList.add("correct");
-
-    $("quizFeedback").textContent=
-     "Correct. Well done.";
-
-    quizCorrect++;
-
-   }else{
-
-    button.classList.add("wrong");
-
-    $("quizFeedback").textContent=
-     "Correct answer: "+item.answer;
-   }
-
-   const percentage=
-    Math.round(
-     quizCorrect/(quizIndex+1)*100
-    );
-
-   $("quizScore").textContent=
-    percentage+"%";
-
-   saveHistory("Quiz",option);
+  recognition.onstart=()=>{
+    showToast("Listening...");
   };
 
-  $("options").appendChild(button);
- });
-}
+  recognition.onresult=(event)=>{
 
-$("nextQuestion").addEventListener("click",()=>{
+    const text=event.results[0][0].transcript;
 
- quizIndex++;
+    document.getElementById("transcript").textContent=text;
 
- if(quizIndex>=quiz.length){
+    detectWords(text);
 
-  quizIndex=0;
-  quizCorrect=0;
+    saveHistory("Speech: "+text);
 
-  toast("Quiz restarted");
- }
+  };
 
- renderQuiz();
-});
+  recognition.onerror=()=>{
+    showToast("Microphone could not be accessed.");
+  };
 
-renderQuiz();
-
-
-/* ================================
-   SEARCH
-================================ */
-
-$("globalSearch").addEventListener("keydown",e=>{
-
- if(e.key!=="Enter")return;
-
- const q=e.target.value.toLowerCase();
-
- if(q.includes("quiz")){
-  showPage("quiz");
- }else if(q.includes("alphabet")||q.includes("finger")){
-  showPage("alphabet");
- }else if(q.includes("assistant")||q.includes("ask")){
-  showPage("assistant");
- }else if(q.includes("camera")||q.includes("live")){
-  showPage("live");
- }else if(q.includes("avatar")){
-  showPage("avatar");
- }else if(q.includes("dictionary")||q.includes("term")){
-  showPage("dictionary");
- }else{
-  showPage("dashboard");
- }
-
-});
-
-
-/* ================================
-   HISTORY / LOGOUT
-================================ */
-
-$("clearHistory").addEventListener("click",()=>{
-
- localStorage.removeItem("abhedya_history");
-
- renderHistory();
-
- toast("History cleared");
-});
-
-$("logout").addEventListener("click",()=>{
-
- toast("Demo logout");
-
- setTimeout(()=>{
-  showPage("dashboard");
- },500);
-});
-
-
-function updateSignCount(){
-
- const current=
-  Number(localStorage.getItem("abhedya_signs")||0)+1;
-
- localStorage.setItem(
-  "abhedya_signs",
-  current
- );
-
- $("signCount").textContent=current;
+  recognition.start();
 }
 
 
-/* ================================
-   STARTUP
-================================ */
+function detectWords(text){
 
-$("signCount").textContent=
- localStorage.getItem("abhedya_signs")||0;
+  const feed=document.getElementById("signFeed");
 
-renderHistory();
+  feed.innerHTML="";
+
+  text.split(/\s+/).slice(0,10).forEach(word=>{
+
+    const span=document.createElement("span");
+
+    span.className="tag";
+    span.textContent=word;
+
+    feed.appendChild(span);
+
+  });
+
+  signsPracticed++;
+
+  document.getElementById("signCount").textContent=signsPracticed;
+}
+
+
+function demoLecture(){
+
+  const text=
+    "Welcome to the computer science class. Today we will learn about algorithms, data, networks and artificial intelligence.";
+
+  document.getElementById("transcript").textContent=text;
+
+  detectWords(text);
+
+  showToast("Demo lecture running");
+
+  saveHistory("Demo lecture");
+}
+
+
+function clearTranscript(){
+
+  document.getElementById("transcript").textContent=
+    "Transcript cleared.";
+
+  document.getElementById("signFeed").innerHTML=
+    '<span class="tag">Ready</span>';
+}
+
+
+/* ALPHABET */
+
+function buildAlphabet(){
+
+  const grid=document.getElementById("alphabetGrid");
+
+  grid.innerHTML="";
+
+  for(let i=65;i<=90;i++){
+
+    const letter=String.fromCharCode(i);
+
+    const button=document.createElement("button");
+
+    button.className="alpha";
+    button.textContent=letter;
+
+    button.onclick=()=>showLetter(letter);
+
+    grid.appendChild(button);
+  }
+
+}
+
+
+function showLetter(letter){
+
+  document.getElementById("signDisplay").innerHTML=`
+
+    <div>
+
+      <div style="font-size:70px">✋</div>
+
+      <h2>${letter}</h2>
+
+      <p class="muted">
+        ISL fingerspelling practice for ${letter}
+      </p>
+
+    </div>
+  `;
+
+  signsPracticed++;
+
+  document.getElementById("signCount").textContent=signsPracticed;
+
+  saveHistory("Practiced letter "+letter);
+}
+
+
+function spellWord(){
+
+  const input=
+    document.getElementById("spellInput").value
+    .toUpperCase()
+    .replace(/[^A-Z ]/g,"");
+
+  const output=document.getElementById("spellOutput");
+
+  output.innerHTML="";
+
+  if(!input.trim()){
+
+    showToast("Enter a word first.");
+    return;
+  }
+
+  [...input].forEach(char=>{
+
+    const tag=document.createElement("span");
+
+    tag.className="tag";
+
+    tag.textContent=
+      char===" " ? "SPACE" : char;
+
+    output.appendChild(tag);
+
+  });
+
+  signsPracticed++;
+
+  document.getElementById("signCount").textContent=signsPracticed;
+
+  saveHistory("Spelled "+input);
+
+}
+
+
+/* DICTIONARY */
+
+function renderDictionary(list=dictionary){
+
+  const box=document.getElementById("dictionaryResults");
+
+  box.innerHTML="";
+
+  list.forEach(item=>{
+
+    const card=document.createElement("div");
+
+    card.className="card";
+
+    card.innerHTML=`
+      <h3>${item[0]}</h3>
+      <p class="muted" style="margin-top:8px">
+        ${item[1]}
+      </p>
+      <button
+        class="secondary"
+        style="margin-top:12px"
+        onclick="showToast('Practicing ${item[0]}')">
+        Practice Sign
+      </button>
+    `;
+
+    box.appendChild(card);
+
+  });
+
+}
+
+
+function dictionarySearch(){
+
+  const q=
+    document.getElementById("dictionaryInput")
+    .value
+    .toLowerCase();
+
+  const result=dictionary.filter(item=>
+    item[0].toLowerCase().includes(q) ||
+    item[1].toLowerCase().includes(q)
+  );
+
+  renderDictionary(result);
+
+}
+
+
+/* ASSISTANT */
+
+function askISL(){
+
+  const input=document.getElementById("askInput");
+
+  const text=input.value.trim();
+
+  if(!text)return;
+
+  const chat=document.getElementById("chat");
+
+  const user=document.createElement("div");
+
+  user.className="message user";
+  user.textContent=text;
+
+  chat.appendChild(user);
+
+  let answer=
+    "I can help you practice ISL vocabulary and understand the Abhedya interpreter workflow.";
+
+  const lower=text.toLowerCase();
+
+  if(lower.includes("algorithm")){
+    answer=
+      "Algorithm means a step-by-step procedure used to solve a problem. In the prototype, you can practice it from Dictionary & Terms.";
+  }
+  else if(lower.includes("network")){
+    answer=
+      "A network is a group of connected devices that communicate and share resources.";
+  }
+  else if(lower.includes("isl")){
+    answer=
+      "ISL means Indian Sign Language. Abhedya is designed as an educational prototype for ISL learning and accessible technical education.";
+  }
+  else if(lower.includes("computer")){
+    answer=
+      "A computer is an electronic device that processes and stores information.";
+  }
+  else if(lower.includes("hello")){
+    answer=
+      "Hello! You can practice greetings through the vocabulary and fingerspelling modules.";
+  }
+
+  setTimeout(()=>{
+
+    const bot=document.createElement("div");
+
+    bot.className="message bot";
+    bot.textContent=answer;
+
+    chat.appendChild(bot);
+
+    chat.scrollTop=chat.scrollHeight;
+
+  },300);
+
+  input.value="";
+
+  saveHistory("Asked ISL Assistant: "+text);
+
+}
+
+
+/* AVATAR */
+
+function playAvatar(){
+
+  const input=
+    document.getElementById("avatarInput").value.trim();
+
+  if(!input){
+
+    showToast("Enter a word.");
+    return;
+  }
+
+  document.getElementById("avatarSign").textContent=
+    input.toUpperCase();
+
+  showToast("Avatar sign loaded");
+
+  saveHistory("Avatar: "+input);
+}
+
+
+/* LESSONS */
+
+function lesson(name){
+
+  showToast(name+" lesson started");
+
+  saveHistory("Lesson: "+name);
+
+}
+
+
+/* QUIZ */
+
+function loadQuestion(){
+
+  const data=quizData[currentQuestion];
+
+  document.getElementById("question").textContent=data.q;
+
+  const options=document.getElementById("options");
+
+  options.innerHTML="";
+
+  data.options.forEach((option,index)=>{
+
+    const button=document.createElement("button");
+
+    button.className="option";
+    button.textContent=option;
+
+    button.onclick=()=>{
+
+      if(index===data.answer){
+
+        quizPoints++;
+
+        showToast("Correct ✓");
+
+      }else{
+
+        showToast("Try again");
+
+      }
+
+      document.getElementById("quizScore").textContent=
+        Math.round(
+          quizPoints/quizData.length*100
+        )+"%";
+
+    };
+
+    options.appendChild(button);
+
+  });
+
+}
+
+
+function nextQuestion(){
+
+  currentQuestion++;
+
+  if(currentQuestion>=quizData.length){
+
+    currentQuestion=0;
+    showToast("Quiz completed!");
+
+  }
+
+  loadQuestion();
+
+}
+
+
+/* PHOTO */
+
+function previewPhoto(event){
+
+  const file=event.target.files[0];
+
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=function(e){
+
+    document.getElementById("photoResult").innerHTML=`
+
+      <img
+        src="${e.target.result}"
+        style="
+          max-width:100%;
+          max-height:400px;
+          border-radius:15px;
+          border:1px solid var(--border);
+        "
+      >
+
+      <h3 style="margin-top:15px">
+        Image loaded successfully
+      </h3>
+
+      <p class="muted">
+        Prototype analysis ready.
+      </p>
+    `;
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+
+/* HISTORY */
+
+function saveHistory(text){
+
+  let history=
+    JSON.parse(localStorage.getItem("abhedyaHistory")||"[]");
+
+  history.unshift({
+    text:text,
+    time:new Date().toLocaleString()
+  });
+
+  history=history.slice(0,30);
+
+  localStorage.setItem(
+    "abhedyaHistory",
+    JSON.stringify(history)
+  );
+
+  renderHistory();
+
+}
+
+
+function renderHistory(){
+
+  const history=
+    JSON.parse(localStorage.getItem("abhedyaHistory")||"[]");
+
+  const box=document.getElementById("historyList");
+
+  if(!history.length){
+
+    box.textContent="No sessions recorded yet.";
+    return;
+  }
+
+  box.innerHTML="";
+
+  history.forEach(item=>{
+
+    const div=document.createElement("div");
+
+    div.className="card";
+
+    div.style.marginBottom="10px";
+
+    div.innerHTML=`
+      <b>${item.text}</b>
+      <div class="muted" style="margin-top:5px">
+        ${item.time}
+      </div>
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+
+function clearHistory(){
+
+  localStorage.removeItem("abhedyaHistory");
+
+  renderHistory();
+
+  showToast("History cleared");
+
+}
+
+
+/* GLOBAL SEARCH */
+
+function globalSearch(event){
+
+  if(event.key!=="Enter")return;
+
+  const value=
+    event.target.value.trim().toLowerCase();
+
+  if(!value)return;
+
+  if(
+    value.includes("alphabet") ||
+    value.includes("sign") ||
+    value.includes("finger")
+  ){
+
+    showPageById("alphabet");
+
+  }else if(
+    value.includes("quiz")
+  ){
+
+    showPageById("quiz");
+
+  }else if(
+    value.includes("assistant") ||
+    value.includes("ask")
+  ){
+
+    showPageById("assistant");
+
+  }else if(
+    value.includes("camera") ||
+    value.includes("live") ||
+    value.includes("interpreter")
+  ){
+
+    showPageById("live");
+
+  }else{
+
+    showPageById("dictionary");
+
+    document.getElementById("dictionaryInput").value=value;
+
+    dictionarySearch();
+
+  }
+
+}
+
+
+/* TOAST */
+
+let toastTimer;
+
+function showToast(message){
+
+  const toast=document.getElementById("toast");
+
+  toast.textContent=message;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer=setTimeout(()=>{
+    toast.classList.remove("show");
+  },2500);
+
+}
+
+
+/* INITIALIZATION */
+
+function initialize(){
+
+  const theme=localStorage.getItem("abhedyaTheme");
+
+  if(theme==="light"){
+    document.documentElement.setAttribute(
+      "data-theme","light"
+    );
+  }
+
+  buildAlphabet();
+  renderDictionary();
+  loadQuestion();
+  renderHistory();
+
+  const role=localStorage.getItem("abhedyaRole");
+
+  if(role){
+    selectedRole=role;
+  }
+
+}
+
+initialize();
 
 </script>
 
 </body>
-  </html>
+ </html>
